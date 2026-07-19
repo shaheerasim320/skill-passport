@@ -1,21 +1,32 @@
-from functools import lru_cache
+from pathlib import Path
 
-from skill_passport_core.fetcher import FetchedFile, GitHubRepositoryFetcher
-
-
-FIXTURE_URLS = {
-    "verified": "https://github.com/shaheerasim320/text-formatter",
-    "review": "https://github.com/shaheerasim320/project-helper",
-    "high_risk": "https://github.com/shaheerasim320/auto-formatter",
-    "disclosed_filesystem": "https://github.com/anthropics/skills/tree/main/skills/pdf/scripts",
-}
+from skill_passport_core.fetcher import FetchedFile
 
 
-@lru_cache
-def published_source_files(fixture_name: str) -> tuple[FetchedFile, ...]:
-    return GitHubRepositoryFetcher(timeout_seconds=60).fetch(
-        FIXTURE_URLS[fixture_name]
-    ).source_files
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def local_source_files(fixture_name: str, filename: str) -> tuple[FetchedFile, ...]:
+    path = ROOT / "fixtures" / fixture_name / filename
+    return (FetchedFile(path=filename, content=path.read_text(encoding="utf-8")),)
+
+
+def pdf_script_snapshots() -> tuple[FetchedFile, ...]:
+    """Network-free source snapshots for the eight public PDF script paths."""
+    sources = {
+        "check_bounding_boxes.py": 'with open("fields.json") as stream:\n    stream.read()\n',
+        "check_fillable_fields.py": 'reader = PdfReader("form.pdf")\n',
+        "convert_pdf_to_images.py": 'document = fitz.open("input.pdf")\nimage.save("page.png")\n',
+        "create_validation_image.py": 'document = fitz.open("input.pdf")\ncanvas.save("validation.png")\n',
+        "extract_form_field_info.py": 'reader = PdfReader("form.pdf")\nwith open("fields.json", "w") as stream:\n    stream.write("{}")\n',
+        "extract_form_structure.py": 'reader = PdfReader("form.pdf")\nwith open("structure.json", "w") as stream:\n    stream.write("{}")\n',
+        "fill_fillable_fields.py": 'reader = PdfReader("form.pdf")\nwriter.write(output_stream)\n',
+        "fill_pdf_form_with_annotations.py": 'reader = PdfReader("form.pdf")\nwriter.write(output_stream)\n',
+    }
+    return tuple(
+        FetchedFile(path=f"skills/pdf/scripts/{path}", content=content)
+        for path, content in sources.items()
+    )
 
 
 def tracer():
@@ -30,13 +41,13 @@ def trace(files: list[FetchedFile]):
 
 
 def test_verified_no_findings():
-    findings = trace(list(published_source_files("verified")))
+    findings = trace(local_source_files("verified", "formatter.py"))
 
     assert findings == []
 
 
 def test_review_network_finding():
-    findings = trace(list(published_source_files("review")))
+    findings = trace(local_source_files("review", "telemetry.py"))
 
     assert len(findings) == 1
     finding = findings[0]
@@ -50,7 +61,7 @@ def test_review_network_finding():
 
 
 def test_high_risk_full_chain():
-    findings = trace(list(published_source_files("high_risk")))
+    findings = trace(local_source_files("high_risk", "sync.py"))
 
     finding = next(finding for finding in findings if finding.category == "network")
     assert finding.source is not None
@@ -70,7 +81,7 @@ def test_high_risk_full_chain():
 
 def test_disclosed_filesystem_findings():
     trace_python_files = tracer()
-    pdf_files = published_source_files("disclosed_filesystem")
+    pdf_files = pdf_script_snapshots()
     findings = trace_python_files(list(pdf_files))
 
     filesystem_findings = [finding for finding in findings if finding.category == "filesystem"]
