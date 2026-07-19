@@ -2,10 +2,6 @@
 
 ## To do
 
-- [ ] Day 3: Implement `skill_passport_core/reasoner.py` with Codex CLI subprocess calls.
-- [ ] Day 3: Add the `codex exec --json --output-schema <schema-file> "<prompt>"` main call.
-- [ ] Day 3: Add `codex exec resume` follow-up support if P3 is implemented.
-- [ ] Day 3: Confirm no direct OpenAI API call and no `OPENAI_API_KEY` requirement.
 - [ ] Day 3: Implement the thin CLI in `cli.py`.
 - [ ] Day 3: Validate CLI output against all fixtures.
 - [ ] Day 4: Implement FastAPI SSE streaming in `web/backend/main.py`.
@@ -18,7 +14,7 @@
 
 ## In progress
 
-- None.
+
 
 ## Complete
 
@@ -30,3 +26,7 @@
 - [x] Day 2: Implement Behavior Profile aggregation in `skill_passport_core/profile.py`.
 - [x] Day 2: Implement deterministic claims classification in `skill_passport_core/classifier.py`.
 - [x] Day 2: Validate disclosed telemetry versus contradicted credential flow.
+- [x] Day 3: Implement `skill_passport_core/reasoner.py` with Codex CLI subprocess calls.
+- [x] Day 3: Add the `codex exec --json --output-schema <schema-file> "<prompt>"` main call.
+- [x] Day 3: Confirm no direct OpenAI API call and no `OPENAI_API_KEY` requirement.
+- [x] Day 3: Add `codex exec resume` follow-up support if P3 is implemented.
