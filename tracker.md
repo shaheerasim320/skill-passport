@@ -4,7 +4,7 @@
 
 - [x] Day 1: Create four fixtures: synthetic clean `text-formatter`, real `anthropics/skills` PDF filesystem fixture, synthetic disclosed-telemetry `project-helper`, and synthetic contradiction `auto-formatter`.
 - [x] Day 1: Publish the synthetic fixtures under the developer's GitHub account: `text-formatter`, `project-helper`, and `auto-formatter`.
-- [ ] Day 1: Implement GitHub REST fetching in `skill_passport_core/fetcher.py`.
+- [x] Day 1: Implement GitHub REST fetching in `skill_passport_core/fetcher.py`.
 - [ ] Day 1: Implement deterministic Python AST/taint tracing in `skill_passport_core/ast_tracer.py`.
 - [ ] Day 1: Add tracer tests for all four fixtures.
 - [ ] Day 2: Implement Behavior Profile aggregation in `skill_passport_core/profile.py`.
