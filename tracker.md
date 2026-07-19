@@ -2,9 +2,6 @@
 
 ## To do
 
-- [ ] Day 2: Implement Behavior Profile aggregation in `skill_passport_core/profile.py`.
-- [ ] Day 2: Implement deterministic claims classification in `skill_passport_core/classifier.py`.
-- [ ] Day 2: Validate disclosed telemetry versus contradicted credential flow.
 - [ ] Day 3: Implement `skill_passport_core/reasoner.py` with Codex CLI subprocess calls.
 - [ ] Day 3: Add the `codex exec --json --output-schema <schema-file> "<prompt>"` main call.
 - [ ] Day 3: Add `codex exec resume` follow-up support if P3 is implemented.
@@ -30,3 +27,6 @@
 - [x] Day 1: Implement GitHub REST fetching in `skill_passport_core/fetcher.py`.
 - [x] Day 1: Implement deterministic Python AST/taint tracing in `skill_passport_core/ast_tracer.py`.
 - [x] Day 1: Add tracer tests for all four fixtures.
+- [x] Day 2: Implement Behavior Profile aggregation in `skill_passport_core/profile.py`.
+- [x] Day 2: Implement deterministic claims classification in `skill_passport_core/classifier.py`.
+- [x] Day 2: Validate disclosed telemetry versus contradicted credential flow.
