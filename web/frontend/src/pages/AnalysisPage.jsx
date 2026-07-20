@@ -84,7 +84,7 @@ export function AnalysisPage() {
   const [followUpState, setFollowUpState] = useState(0);
 
   useEffect(() => {
-    if (!githubUrl) { setError("A public GitHub repository URL is required."); return; }
+    if (!githubUrl) { setError("A public GitHub repository URL is required."); setErrorCode("analysis_failed"); return; }
     const controller = new AbortController();
     let buffer = "";
     const started = performance.now();
@@ -92,7 +92,11 @@ export function AnalysisPage() {
     async function run() {
       try {
         const response = await fetch("/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ github_url: normaliseUrl(githubUrl) }), signal: controller.signal });
-        if (!response.ok || !response.body) throw new Error("Unable to start repository analysis.");
+        if (!response.ok || !response.body) {
+          setError("The analysis service is unavailable. Confirm that the backend is running, then try again.");
+          setErrorCode("backend_unavailable");
+          return;
+        }
         const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
         while (true) {
           const { value, done } = await reader.read();
@@ -103,7 +107,10 @@ export function AnalysisPage() {
           packets.forEach(handlePacket);
         }
       } catch (cause) {
-        if (cause.name !== "AbortError") setError(cause.message || "Unable to analyze this repository.");
+        if (cause.name !== "AbortError") {
+          setError("The analysis service is unavailable. Confirm that the backend is running, then try again.");
+          setErrorCode("backend_unavailable");
+        }
       }
     }
 
@@ -131,6 +138,7 @@ export function AnalysisPage() {
     if (active !== "reasoning" || verdict || error) return undefined;
     const timer = window.setTimeout(() => {
       setError("Reasoning is taking longer than expected. Check that Codex CLI is logged in, then try again.");
+      setErrorCode("reasoning_unavailable");
     }, 130000);
     return () => window.clearTimeout(timer);
   }, [active, verdict, error]);
@@ -154,8 +162,14 @@ export function AnalysisPage() {
   const isHighRisk = verdict?.trust_level === "high_risk";
   const isReview = verdict?.trust_level === "review";
 
-  if (errorCode === "repository_not_found") {
-    return <main className="not-found-page"><section className="not-found-card"><div className="not-found-code">404</div><p className="eyebrow">Public repository required</p><h1>Repository not found.</h1><p>We could not find <code>{githubUrl.replace(/^https?:\/\//, "")}</code> on GitHub. It may be private, renamed, deleted, or the URL may be incomplete.</p><p className="not-found-note">Skill Passport can analyze public GitHub repositories only. It never requests access to private repositories.</p><div className="app-error-actions"><a className="btn-ghost" href="/">Try another repository</a><a className="btn-primary not-found-github" href="https://github.com" target="_blank" rel="noreferrer">Open GitHub</a></div></section></main>;
+  if (error && errorCode !== "reasoning_unavailable") {
+    const errorView = {
+      repository_not_found: { code: "404", eyebrow: "Public repository required", title: "Repository not found.", detail: <>We could not find <code>{githubUrl.replace(/^https?:\/\//, "")}</code> on GitHub. It may be private, renamed, deleted, or the URL may be incomplete.</>, note: "Skill Passport can analyze public GitHub repositories only. It never requests access to private repositories." },
+      github_rate_limited: { code: "429", eyebrow: "GitHub request limit", title: "GitHub rate limit reached.", detail: <>GitHub is temporarily limiting requests for <code>{githubUrl.replace(/^https?:\/\//, "")}</code>.</>, note: "Wait for the limit to reset, or configure a server-side GITHUB_TOKEN for a higher request limit." },
+      backend_unavailable: { code: "OFFLINE", eyebrow: "Analysis service unavailable", title: "We could not reach the analysis backend.", detail: "Start the FastAPI backend, confirm the frontend proxy is configured, then try the repository again.", note: "For local development, run: python -m uvicorn web.backend.main:app --reload" },
+      analysis_failed: { code: "ERROR", eyebrow: "Analysis could not complete", title: "This repository could not be analyzed.", detail: <>An error occurred during fetch, tracing, profile building, or classification for <code>{githubUrl.replace(/^https?:\/\//, "")}</code>.</>, note: error },
+    }[errorCode] ?? { code: "ERROR", eyebrow: "Analysis could not complete", title: "This repository could not be analyzed.", detail: error, note: "Try another public repository or retry shortly." };
+    return <main className="not-found-page"><section className="not-found-card"><div className="not-found-code">{errorView.code}</div><p className="eyebrow">{errorView.eyebrow}</p><h1>{errorView.title}</h1><p>{errorView.detail}</p><p className="not-found-note">{errorView.note}</p><div className="app-error-actions"><a className="btn-ghost" href="/">Try another repository</a><button className="btn-primary not-found-github" onClick={() => window.location.reload()}>Retry analysis</button></div></section></main>;
   }
 
   async function copy(value, key) {
@@ -200,7 +214,7 @@ export function AnalysisPage() {
       {PIPELINE.map((stage) => <div className={`stage ${active === stage ? "active" : completed.includes(stage) ? "complete" : "pending"}`} key={stage}><div className="dot">{completed.includes(stage) && active !== stage ? "✓" : ""}</div><div><div className="stage-label">{LABELS[stage]}</div><div className="stage-time">{completed.includes(stage) ? "complete" : active === stage ? "in progress" : "waiting"}</div></div></div>)}
     </div></aside>
       <main className="analysis-main">
-        {error && <div className="error-card"><strong>Analysis stopped.</strong><span>{error}</span></div>}
+        {error && errorCode === "reasoning_unavailable" && <div className="error-card"><strong>Reasoning unavailable.</strong><span>{error}</span></div>}
         {!finalProfile && !error && <section className="card show skeleton-card"><div className="card-head"><h3>Behavior Profile</h3></div>{Array.from({ length: 5 }, (_, index) => <div className="profile-row" key={index}><span className="skeleton skeleton-label" /><span className="skeleton skeleton-tag" /></div>)}</section>}
         {finalProfile && <section className="card show"><div className="card-head"><h3>Behavior Profile</h3></div>{profileRows(finalProfile).map((row) => <div className="profile-row" key={row.label}><span className="profile-label">◔ {row.label}</span><span className={`tag ${row.tone}`}>{row.value}</span></div>)}</section>}
         {!verdict && !error && <><div className="section-title">Preparing analysis</div><section className="card show skeleton-card"><div className="skeleton skeleton-verdict" /><div className="skeleton skeleton-copy" /><div className="skeleton skeleton-copy short" /></section></>}

@@ -100,8 +100,11 @@ def follow_up(request: FollowUpRequest) -> dict[str, str]:
 
 def _analysis_stream(github_url: str) -> Iterator[str]:
     events: Queue[tuple[str, dict[str, Any]] | None] = Queue()
+    last_stage = "fetching"
 
     def stage_callback(stage: str, data: dict[str, Any]) -> None:
+        nonlocal last_stage
+        last_stage = stage
         events.put(
             (
                 "progress",
@@ -139,10 +142,46 @@ def _analysis_stream(github_url: str) -> Iterator[str]:
                     },
                 )
             )
-        except (FetchError, ReasonerError, ValueError, OSError) as error:
-            events.put(("error", {"type": "error", "code": "analysis_error", "message": str(error)}))
+        except FetchError as error:
+            message = str(error)
+            is_rate_limited = "rate limit" in message.lower() or "HTTP 429" in message
+            events.put(
+                (
+                    "error",
+                    {
+                        "type": "error",
+                        "code": "github_rate_limited" if is_rate_limited else "analysis_failed",
+                        "stage": last_stage,
+                        "message": message,
+                    },
+                )
+            )
+        except (ReasonerError, OSError) as error:
+            events.put(
+                (
+                    "error",
+                    {
+                        "type": "error",
+                        "code": "reasoning_unavailable" if last_stage == "reasoning" else "analysis_failed",
+                        "stage": last_stage,
+                        "message": str(error),
+                    },
+                )
+            )
+        except ValueError as error:
+            events.put(("error", {"type": "error", "code": "analysis_failed", "stage": last_stage, "message": str(error)}))
         except Exception:
-            events.put(("error", {"type": "error", "message": "Analysis failed unexpectedly."}))
+            events.put(
+                (
+                    "error",
+                    {
+                        "type": "error",
+                        "code": "analysis_failed",
+                        "stage": last_stage,
+                        "message": "Analysis failed unexpectedly.",
+                    },
+                )
+            )
         finally:
             events.put(None)
 

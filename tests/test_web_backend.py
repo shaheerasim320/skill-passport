@@ -53,6 +53,7 @@ def test_analysis_streams_error_after_progress(monkeypatch):
     response = "".join(_analysis_stream("https://github.com/example/clean"))
 
     assert response.index("event: profile") < response.index("event: error")
+    assert '"code": "reasoning_unavailable"' in response
     assert '"message": "Codex CLI not found."' in response
 
 
