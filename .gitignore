@@ -5,3 +5,4 @@ __pycache__/
 skill_passport.egg-info/
 build/
 dist/
+release-dist/
