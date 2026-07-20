@@ -1,7 +1,19 @@
 # Implementation Tracker
 
 ## To do
-- [ ] Day 5: Record Codex/GPT-5.6 session ID and prepare the demo plan.
+- [ ] Record a public YouTube demonstration video (under three minutes).
+- [ ] Submit `/feedback` from the main Codex project thread and save its Session ID.
+- [ ] Confirm the current PyPI `pipx run` command works for judges.
+- [ ] Complete the hackathon submission form with Developer Tools as the category.
+
+## Hackathon submission checklist
+
+- [x] Add an MIT license.
+- [x] Document how Codex accelerated the work and which decisions and verification remained human-led.
+- [x] Provide local CLI/web setup and judge testing instructions in the README.
+- [ ] Record and upload the public demo video.
+- [ ] Provide the repository URL and public video URL in the submission form.
+- [ ] Provide the required Codex `/feedback` Session ID.
 
 ## Complete
 
@@ -26,3 +38,4 @@
 - [x] Day 5: Run local end-to-end CLI and web validation against the fixture set.
 - [x] Day 5: Confirm local-only authenticated Codex CLI operation for development, testing, and demo recording.
 - [x] Day 5: Confirm safety and statelessness constraints.
+- [x] Day 5: Add an MIT license and prepare the hackathon submission checklist.
