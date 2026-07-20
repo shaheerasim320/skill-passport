@@ -2,7 +2,7 @@
 
 import subprocess
 
-from skill_passport_core.reasoner import _invoke_codex, answer_follow_up
+from skill_passport_core.reasoner import _extract_answer_text, _invoke_codex, answer_follow_up
 
 
 def test_initial_response_captures_thread_id(monkeypatch):
@@ -46,6 +46,13 @@ def test_follow_up_resumes_existing_thread_without_fetching(monkeypatch):
         "--dangerously-bypass-approvals-and-sandbox",
         "Could this be legitimate telemetry?",
     ]
+
+
+def test_follow_up_extracts_a_structured_answer_payload():
+    """A resumed Codex thread may preserve a structured response format."""
+    stdout = '{"type":"item.completed","item":{"text":"{\\"answer\\": \\"The API key reaches telemetry.example.dev.\\"}"}}'
+
+    assert _extract_answer_text(stdout) == "The API key reaches telemetry.example.dev."
 
 
 def test_codex_subprocess_uses_utf8_decoding(monkeypatch):

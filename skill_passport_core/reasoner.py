@@ -334,7 +334,16 @@ def _extract_answer_text(stdout: str | None) -> str | None:
         candidates.extend(_event_text_candidates(event))
     for candidate in reversed(candidates):
         text = candidate.strip()
-        if text and _parse_json_object(text) is None:
+        structured_answer = _parse_json_object(text)
+        if structured_answer is not None:
+            # A resumed thread can retain a structured-output response format.
+            # Extract its human-readable answer rather than treating it as a
+            # verdict-shaped payload and discarding it.
+            for nested in reversed(_event_text_candidates(structured_answer)):
+                nested_text = nested.strip()
+                if nested_text and _parse_json_object(nested_text) is None:
+                    return nested_text
+        elif text:
             return text
     return None
 
@@ -346,7 +355,7 @@ def _event_text_candidates(value: Any) -> list[str]:
         return [item for child in value for item in _event_text_candidates(child)]
     if isinstance(value, dict):
         candidates: list[str] = []
-        for key in ("text", "output", "content", "message"):
+        for key in ("answer", "text", "output", "content", "message"):
             if key in value:
                 candidates.extend(_event_text_candidates(value[key]))
         if "item" in value:

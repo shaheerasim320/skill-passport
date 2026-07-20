@@ -1,19 +1,18 @@
 # Implementation Tracker
 
 ## To do
-- [ ] Record a public YouTube demonstration video (under three minutes).
-- [ ] Submit `/feedback` from the main Codex project thread and save its Session ID.
-- [ ] Confirm the current PyPI `pipx run` command works for judges.
-- [ ] Complete the hackathon submission form with Developer Tools as the category.
+No remaining tasks.
 
 ## Hackathon submission checklist
 
 - [x] Add an MIT license.
 - [x] Document how Codex accelerated the work and which decisions and verification remained human-led.
 - [x] Provide local CLI/web setup and judge testing instructions in the README.
-- [ ] Record and upload the public demo video.
+- [x] Confirm the published PyPI `pipx run` command works from a non-project directory against the live HIGH RISK fixture.
+- [x] Record and upload the public demo video: https://www.youtube.com/watch?v=wfNrL6ukdyo
 - [ ] Provide the repository URL and public video URL in the submission form.
-- [ ] Provide the required Codex `/feedback` Session ID.
+- [x] Submit `/feedback` from the main Codex project thread and save its Session ID privately.
+- [x] Submit Skill Passport to OpenAI Build Week under the Developer Tools category.
 
 ## Complete
 
@@ -39,3 +38,6 @@
 - [x] Day 5: Confirm local-only authenticated Codex CLI operation for development, testing, and demo recording.
 - [x] Day 5: Confirm safety and statelessness constraints.
 - [x] Day 5: Add an MIT license and prepare the hackathon submission checklist.
+- [x] Day 5: Record and upload the public 2:49 demo video.
+- [x] Day 5: Submit Codex `/feedback` and save the Feedback ID privately.
+- [x] Day 5: Validate the published PyPI package with `pipx run` against the live HIGH RISK fixture.
