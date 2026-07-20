@@ -364,7 +364,3 @@ web/
 tests/             Core and backend tests
 fixtures/          Local fixture material used by tests
 ```
-
-## License
-
-License to be added before a public release.
