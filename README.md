@@ -250,6 +250,10 @@ An absent or empty token never prevents unauthenticated analysis; the tool falls
 
 The CLI configures UTF-8 output at startup. Windows Terminal and the VS Code integrated terminal provide the most reliable rendering for checkmarks, verdict icons, and box-drawing characters.
 
+## License
+
+Skill Passport is released under the [MIT License](LICENSE).
+
 ## Web API
 
 The FastAPI backend is stateless: no accounts, database, persistent history, or repository storage.
