@@ -30,6 +30,10 @@ class FetchError(RuntimeError):
     """Raised when a public GitHub repository cannot be fetched."""
 
 
+class RepositoryNotFoundError(FetchError):
+    """Raised when GitHub cannot expose the requested public repository."""
+
+
 @dataclass(frozen=True)
 class RepositoryTarget:
     owner: str
@@ -101,7 +105,14 @@ class GitHubRepositoryFetcher:
 
     def fetch(self, github_url: str) -> RepositoryFetchResult:
         target = parse_github_url(github_url)
-        metadata = self._get_json(f"/repos/{target.owner}/{target.repository}")
+        try:
+            metadata = self._get_json(f"/repos/{target.owner}/{target.repository}")
+        except FetchError as error:
+            if "HTTP 404" in str(error):
+                raise RepositoryNotFoundError(
+                    "Repository not found or not publicly accessible"
+                ) from error
+            raise
         ref = target.ref or metadata["default_branch"]
         tree = self._get_json(
             f"/repos/{target.owner}/{target.repository}/git/trees/{ref}?recursive=1"

@@ -1,16 +1,7 @@
 # Implementation Tracker
 
 ## To do
-- [ ] Day 4: Implement FastAPI SSE streaming in `web/backend/main.py`.
-- [ ] Day 4: Implement the exactly-two-page React frontend in `web/frontend/`.
-- [ ] Day 4: Add landing-page submission and analysis-page evidence/verdict views.
-- [ ] Day 5: Run local end-to-end CLI and web validation.
-- [ ] Day 5: Confirm local-only authenticated Codex CLI operation for development, testing, and demo recording.
-- [ ] Day 5: Confirm safety and statelessness constraints.
-- [ ] Day 5: Prepare README Codex/GPT-5.6 documentation, session ID record, and demo plan.
-
-## In progress
-
+- [ ] Day 5: Record Codex/GPT-5.6 session ID and prepare the demo plan.
 
 ## Complete
 
@@ -28,3 +19,10 @@
 - [x] Day 3: Implement the thin CLI in `cli.py`.
 - [x] Day 3: Reformat and visually validate CLI output against all fixtures.
 - [x] Day 3: Implement and validate grounded Codex CLI follow-up Q&A.
+- [x] Day 4: Implement and validate FastAPI SSE streaming in `web/backend/main.py`.
+- [x] Day 4: Implement and validate the exactly-two-page React frontend in `web/frontend/`.
+- [x] Day 4: Connect the frontend to live SSE analysis data and render real evidence, profile, verdict, error, install, and follow-up Q&A views.
+- [x] Day 5: Prepare comprehensive README documentation for CLI, web, pipeline, configuration, safety, deployment, and future work.
+- [x] Day 5: Run local end-to-end CLI and web validation against the fixture set.
+- [x] Day 5: Confirm local-only authenticated Codex CLI operation for development, testing, and demo recording.
+- [x] Day 5: Confirm safety and statelessness constraints.
