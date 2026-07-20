@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trust_level", "behavior_profile", "evidence", "classifications", "reasoning", "recommendation", "install_command"],
+  "properties": {
+    "trust_level": { "type": "string", "enum": ["verified", "review", "high_risk"] },
+    "behavior_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network", "filesystem", "secrets", "shell"],
+      "properties": {
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["detected", "evidence", "external_domains"],
+          "properties": {
+            "detected": { "type": "boolean" },
+            "evidence": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+            "external_domains": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "filesystem": { "$ref": "#/$defs/behavior_category" },
+        "secrets": { "$ref": "#/$defs/behavior_category" },
+        "shell": { "$ref": "#/$defs/behavior_category" }
+      }
+    },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "classifications": { "type": "array", "items": { "$ref": "#/$defs/classification" } },
+    "reasoning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["judgment", "translation"],
+      "properties": {
+        "judgment": { "type": "string" },
+        "translation": { "type": "string" }
+      }
+    },
+    "recommendation": { "type": "string" },
+    "install_command": { "type": "string" }
+  },
+  "$defs": {
+    "behavior_category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detected", "evidence"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/finding" } }
+      }
+    },
+    "evidence_location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "line", "description"],
+      "properties": {
+        "file": { "type": "string" },
+        "line": { "type": "integer" },
+        "description": { "type": "string" }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "source", "sink", "assignment_chain", "external_domain"],
+      "properties": {
+        "category": { "type": "string", "enum": ["network", "filesystem", "secrets", "shell"] },
+        "source": { "anyOf": [{ "$ref": "#/$defs/evidence_location" }, { "type": "null" }] },
+        "sink": { "$ref": "#/$defs/evidence_location" },
+        "assignment_chain": { "type": "array", "items": { "type": "string" } },
+        "external_domain": { "type": ["string", "null"] }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "status", "claim_excerpt"],
+      "properties": {
+        "category": { "type": "string", "enum": ["network", "filesystem", "secrets", "shell"] },
+        "status": { "type": "string", "enum": ["DISCLOSED", "UNDISCLOSED", "CONTRADICTION"] },
+        "claim_excerpt": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

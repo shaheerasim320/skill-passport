@@ -1,2 +1,7 @@
 ﻿fixtures/
 __pycache__/
+
+.env
+skill_passport.egg-info/
+build/
+dist/

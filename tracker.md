@@ -1,9 +1,6 @@
 # Implementation Tracker
 
 ## To do
-
-- [ ] Day 3: Implement the thin CLI in `cli.py`.
-- [ ] Day 3: Validate CLI output against all fixtures.
 - [ ] Day 4: Implement FastAPI SSE streaming in `web/backend/main.py`.
 - [ ] Day 4: Implement the exactly-two-page React frontend in `web/frontend/`.
 - [ ] Day 4: Add landing-page submission and analysis-page evidence/verdict views.
@@ -13,7 +10,6 @@
 - [ ] Day 5: Prepare README Codex/GPT-5.6 documentation, session ID record, and demo plan.
 
 ## In progress
-
 
 
 ## Complete
@@ -29,4 +25,6 @@
 - [x] Day 3: Implement `skill_passport_core/reasoner.py` with Codex CLI subprocess calls.
 - [x] Day 3: Add the `codex exec --json --output-schema <schema-file> "<prompt>"` main call.
 - [x] Day 3: Confirm no direct OpenAI API call and no `OPENAI_API_KEY` requirement.
-- [x] Day 3: Add `codex exec resume` follow-up support if P3 is implemented.
+- [x] Day 3: Implement the thin CLI in `cli.py`.
+- [x] Day 3: Reformat and visually validate CLI output against all fixtures.
+- [x] Day 3: Implement and validate grounded Codex CLI follow-up Q&A.

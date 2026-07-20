@@ -8,17 +8,22 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 from dataclasses import dataclass
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
+from dotenv import load_dotenv
+
 
 GITHUB_API = "https://api.github.com"
 SOURCE_SUFFIXES = {".py", ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"}
 CLAIMS_FILENAMES = {"skill.md", "package.json", "manifest.json", "mcp.json"}
+DOTENV_PATH = Path(__file__).resolve().parents[1] / ".env"
+ENV_FILE_VARIABLE = "SKILL_PASSPORT_ENV_FILE"
 
 
 class FetchError(RuntimeError):
@@ -90,7 +95,9 @@ class GitHubRepositoryFetcher:
     """Fetch claims and source text from a public GitHub repository via REST."""
 
     def __init__(self, timeout_seconds: float = 20.0) -> None:
+        _load_optional_environment_file()
         self.timeout_seconds = timeout_seconds
+        self.github_token = (os.getenv("GITHUB_TOKEN") or "").strip()
 
     def fetch(self, github_url: str) -> RepositoryFetchResult:
         target = parse_github_url(github_url)
@@ -126,12 +133,15 @@ class GitHubRepositoryFetcher:
         )
 
     def _get_json(self, path: str) -> dict[str, Any]:
+        headers = {
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "skill-passport-fetcher",
+        }
+        if self.github_token:
+            headers["Authorization"] = f"Bearer {self.github_token}"
         request = Request(
             f"{GITHUB_API}{path}",
-            headers={
-                "Accept": "application/vnd.github+json",
-                "User-Agent": "skill-passport-fetcher",
-            },
+            headers=headers,
         )
         try:
             with urlopen(request, timeout=self.timeout_seconds) as response:
@@ -177,3 +187,22 @@ class GitHubRepositoryFetcher:
 def fetch_repository(github_url: str) -> RepositoryFetchResult:
     """Convenience function for fetching a public GitHub repository."""
     return GitHubRepositoryFetcher().fetch(github_url)
+
+
+def _load_optional_environment_file() -> None:
+    """Load optional user configuration without overriding real environment variables."""
+    configured_path = os.getenv(ENV_FILE_VARIABLE)
+    candidates = [
+        Path(configured_path).expanduser() if configured_path else None,
+        Path.cwd() / ".env",
+        DOTENV_PATH,
+    ]
+    loaded: set[Path] = set()
+    for path in candidates:
+        if path is None:
+            continue
+        resolved = path.resolve()
+        if resolved in loaded:
+            continue
+        loaded.add(resolved)
+        load_dotenv(dotenv_path=resolved, encoding="utf-8-sig")
