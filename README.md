@@ -6,6 +6,22 @@ Before installing a skill, paste or pass its public GitHub URL to Skill Passport
 
 > Skill Passport never clones, imports, executes, or installs the repository it analyzes. It also never automatically runs a recommended installation command.
 
+## Quick start — no repository clone required
+
+Install [`pipx`](https://pipx.pypa.io/) once, then run Skill Passport directly from PyPI against any public GitHub repository:
+
+```powershell
+pipx run skill-passport check github.com/owner/repository
+```
+
+For example:
+
+```powershell
+pipx run skill-passport check github.com/shaheerasim320/auto-formatter
+```
+
+`pipx` downloads the published package into an isolated temporary environment. You do **not** need to clone this repository or run `pip install -e .`. For the complete local reasoning and follow-up experience, install and log in to the Codex CLI first.
+
 ## What it detects
 
 - Outbound network calls and external domains
