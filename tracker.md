@@ -10,7 +10,7 @@ No remaining tasks.
 - [x] Provide local CLI/web setup and judge testing instructions in the README.
 - [x] Confirm the published PyPI `pipx run` command works from a non-project directory against the live HIGH RISK fixture.
 - [x] Record and upload the public demo video: https://www.youtube.com/watch?v=wfNrL6ukdyo
-- [ ] Provide the repository URL and public video URL in the submission form.
+- [x] Provide the repository URL and public video URL in the submission form.
 - [x] Submit `/feedback` from the main Codex project thread and save its Session ID privately.
 - [x] Submit Skill Passport to OpenAI Build Week under the Developer Tools category.
 
