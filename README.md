@@ -138,6 +138,14 @@ Direct filesystem operations can have no upstream sensitive-data source. In that
 
 There is no direct OpenAI API call and no `OPENAI_API_KEY` requirement for the current CLI workflow.
 
+## How Codex helped build this project
+
+Skill Passport was built with Codex as an implementation and review collaborator. Codex accelerated the mechanical parts of the work: scaffolding the Python and React structure, drafting focused pytest cases, tracing and fixing integration errors, refining the SSE UI, and improving documentation and packaging.
+
+The project decisions and verification remained human-led. The author chose the product problem, the read-only threat model, the four-fixture test strategy, the detection categories, the `DISCLOSED` / `UNDISCLOSED` / `CONTRADICTION` rules, and the final CLI and web experience. The author also created and published the synthetic fixture repositories, selected the real Anthropic PDF fixture, manually ran the CLI and browser flows against all four live repositories, and reviewed whether the evidence and verdicts were correct.
+
+Codex was not treated as a substitute for verification. Deterministic stages are covered by tests, while the Codex reasoning layer only translates already-collected evidence into plain English. The tool never asks the model to execute, install, or make unsupported claims about the analyzed repository.
+
 ## Requirements
 
 ### CLI users
