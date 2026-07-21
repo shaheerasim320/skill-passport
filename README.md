@@ -6,6 +6,19 @@ Before installing a skill, paste or pass its public GitHub URL to Skill Passport
 
 > Skill Passport never clones, imports, executes, or installs the repository it analyzes. It also never automatically runs a recommended installation command.
 
+## See it in action
+
+![Skill Passport: a public repository is analyzed, classified HIGH RISK, and traced back to concrete evidence](docs/images/skill-passport-preview.gif)
+
+Short product preview: paste a public GitHub repository, watch the evidence-based pipeline run, and review the resulting verdict. For the narrated hackathon walkthrough, see the [full demo on YouTube](https://www.youtube.com/watch?v=wfNrL6ukdyo).
+
+> **Safety by design**
+>
+> - Never clones repositories
+> - Never imports or executes repository code
+> - Never installs a skill automatically
+> - Never executes a displayed installation command
+
 ## Quick start — no repository clone required
 
 Install [`pipx`](https://pipx.pypa.io/) once, then run Skill Passport directly from PyPI against any public GitHub repository:
@@ -39,6 +52,20 @@ pipx run skill-passport check github.com/shaheerasim320/auto-formatter
 | `REVIEW` | Sensitive behavior is documented, but a developer should decide whether it is acceptable. |
 | `HIGH RISK` | Behavior is undisclosed or contradicts repository claims, such as a secret being sent to an external domain despite a no-network claim. |
 
+## What it looks like
+
+### Landing page
+
+![Skill Passport landing page](docs/images/landing-page.png)
+
+### Behavior profile and verdict
+
+![HIGH RISK verdict with detected network access, environment-secret access, and an external telemetry domain](docs/images/high-risk-verdict.png)
+
+### Traceable evidence, not just a warning
+
+![Evidence chain from OPENAI_API_KEY through a request payload to requests.post and an external domain, compared with the denied no-network claim](docs/images/evidence-contradiction.png)
+
 ## Two ways to use Skill Passport
 
 ### 1. CLI — full local experience
@@ -65,6 +92,8 @@ skill-passport check github.com/shaheerasim320/auto-formatter
 ```
 
 The CLI never executes the repository or a displayed install command. A `HIGH RISK` verdict never displays an install command.
+
+![CLI output showing a HIGH RISK verdict and grounded follow-up answer](docs/images/cli-high-risk.png)
 
 ### 2. Web app — visual analysis experience
 
